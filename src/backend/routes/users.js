@@ -52,7 +52,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
  * Authorization required: admin
  **/
 
-router.get("/", /* ensureAdmin, */ async function (req, res, next) {
+router.get("/", ensureAdmin, async function (req, res, next) {
   try {
     const users = await User.findAll();
     return res.json({ users });
@@ -121,22 +121,39 @@ router.delete("/:username", ensureCorrectUserOrAdmin, async function (req, res, 
 });
 
 
-/** POST /[username]/jobs/[id]  { state } => { application }
+/** POST /[username]/follow/[username2]
+ * 
+ * Follows a user
  *
- * Returns {"applied": jobId}
- *
- * Authorization required: admin or same-user-as-:username
- * */
+ * Authorization required: admin or same-user-as-username
+ */
 
-router.post("/:username/jobs/:id", ensureCorrectUserOrAdmin, async function (req, res, next) {
+router.post("/:username/follow/:username2", ensureCorrectUserOrAdmin, async function (req, res, next) {
   try {
-    const jobId = +req.params.id;
-    await User.applyToJob(req.params.username, jobId);
-    return res.json({ applied: jobId });
+    const { username, username2 } = req.params;
+    await User.follow(username, username2);
+    return res.json({ followed: username2 });
   } catch (err) {
     return next(err);
   }
 });
 
+
+/** POST /[username]/like/[postId]
+ * 
+ * Likes a user's post
+ * 
+ * Authorization required: admin or same-user-as-username
+ */
+
+router.post("/:username/like/:postId", ensureCorrectUserOrAdmin, async function (req, res, next) {
+  try {
+    const { username, postId } = req.params;
+    await User.likePost(username, postId);
+    return res.json({ liked: postId });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 module.exports = router;

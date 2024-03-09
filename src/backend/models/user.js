@@ -144,6 +144,52 @@ class User {
         return user;
     }
 
+    /** Update user data with `data`.
+     *
+     * This is a "partial update" --- it's fine if data doesn't contain
+     * all the fields; this only changes provided ones.
+     *
+     * Data can include:
+     *   { firstName, lastName, password, email, isAdmin }
+     *
+     * Returns { username, firstName, lastName, email, isAdmin }
+     *
+     * Throws NotFoundError if not found.
+     *
+     * WARNING: this function can set a new password or make a user an admin.
+     * Callers of this function must be certain they have validated inputs to this
+     * or a serious security risks are opened.
+     */
+  
+    static async update(username, data) {
+      if (data.password) {
+        data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
+      }
+  
+      const { setCols, values } = sqlForPartialUpdate(
+          data,
+          {
+            displayName: "display_name",
+            isAdmin: "is_admin",
+          });
+      const usernameVarIdx = "$" + (values.length + 1);
+  
+      const querySql = `UPDATE users 
+                        SET ${setCols} 
+                        WHERE username = ${usernameVarIdx} 
+                        RETURNING username,
+                                  display_name AS "displayName"
+                                  email,
+                                  is_admin AS "isAdmin"`;
+      const result = await db.query(querySql, [...values, username]);
+      const user = result.rows[0];
+  
+      if (!user) throw new NotFoundError(`No user: ${username}`);
+  
+      delete user.password;
+      return user;
+    }
+
     /** 
      * Returns usernames this user follows
      */
@@ -196,7 +242,7 @@ class User {
 
     /** Returns posts this user has liked
      * 
-     * [{postId, username, title, content, time_posted}]
+     * Returns [{postId, username, title, content, time_posted}, ...]
      */
     static async getLikes(username) {
         const userRes = await db.query(
@@ -220,6 +266,69 @@ class User {
         const likes = likesRes.rows;
 
         return likes;
+    }
+
+    /** Likes a user's post */
+
+    static async likePost(username, postId) {
+        const userRes = await db.query(
+            `SELECT username
+             FROM users
+             WHERE username=$1`,
+             [username],
+        );
+        const user = userRes.rows[0];
+
+        if (!user) throw new NotFoundError(`No username: ${username}`);
+
+        const postRes = await db.query(
+            `SELECT id
+             FROM posts
+             WHERE id = $1`,
+             [postId],
+        );
+        const post = postRes.rows[0];
+
+        if (!post) throw new NotFoundError(`No post with id: ${postId}`);
+
+        await db.query(
+            `INSERT INTO likes (username, post_id)
+             VALUES ($1, $2)`,
+             [username, postId],
+        );
+    }
+
+    /** Follows a user
+     * 
+     * username1 follows username2
+    */
+
+    static async followUser(username1, username2) {
+        const user1Res = await db.query(
+            `SELECT username
+             FROM users
+             WHERE username=$1`,
+             [username1],
+        );
+        const user1 = user1Res.rows[0];
+
+        if (!user1) throw new NotFoundError(`No username: ${username1}`);
+
+        const user2Res = await db.query(
+            `SELECT username
+             FROM users
+             WHERE username=$1`,
+             [username2],
+        );
+        const user2 = user2Res.rows[0];
+
+        if (!user2) throw new NotFoundError(`No username: ${username2}`);
+
+        await db.query(
+            `INSERT INTO follows (user_following, user_followed)
+             VALUES ($1, $2)`,
+             [username1, username2],
+        );
     }
 }
 
