@@ -11,14 +11,14 @@ CREATE TABLE posts (
     id SERIAL PRIMARY KEY,
     username VARCHAR(25) NOT NULL,
     content TEXT NOT NULL,
-    time_posted DATETIME DEFAULT CURRENT_TIMESTAMP
+    time_posted TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE likes (
     username VARCHAR(25)
         REFERENCES users ON DELETE CASCADE,
     post_id INTEGER
-        REFERENCES posts ON DELETE CASCADE
+        REFERENCES posts ON DELETE CASCADE,
     PRIMARY KEY (username, post_id)
 );
 
