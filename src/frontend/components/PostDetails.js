@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
-import "../styles/Post.css";
+import "../styles/PostDetails.css";
 import UserApi from "../api";
-import { NavLink, NavItem } from "reactstrap";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 
-function Post({ postId }) {
+function Post() {
 
-    const [ post, setPost ] = useState(UserApi.getPost(postId));
+    const { id } = useParams();
+    const [ post, setPost ] = useState(UserApi.getPost(id));
     const [ isLoading, setIsLoading ] = useState(true);
 
     useEffect(() => {
         async function getPost() {
-            let res = await UserApi.getPost(postId);
+            let res = await UserApi.getPost(id);
             setPost(res);
             setIsLoading(false);
         }
         getPost();
-    }, [postId]);
+    }, [id]);
 
     if(isLoading) {
         return <p>Loading...</p>;
@@ -27,12 +28,12 @@ function Post({ postId }) {
             <p className="Post-content" >
                 {post.content}
             </p>
-            <p className="Post-time" >
-                {post.timePosted.split('.')[0].replace("T", " at ")}
-            </p>
-            <NavLink className="Post-username" href={`/users/${post.username}`} >
+            <p className="Post-username" >
                 {post.username}
-            </NavLink>
+            </p>
+            <p className="Post-time" >
+                {post.timePosted.split('.')[0]}
+            </p>  
         </div>
     )
 }

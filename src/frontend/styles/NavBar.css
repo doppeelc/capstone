@@ -1,0 +1,30 @@
+#NavBar {
+    height: 50px;
+}
+
+#NavBar-Nav {
+    height: 100%;
+}
+
+#NavBar-left {
+    display: table;
+    width: 10%;
+    height: 100%;
+    float: left;
+    border: 1px solid black;
+    margin-left: 5px;
+}
+
+#NavBar-others {
+    display: table;
+    width: 10%;
+    height: 100%;
+    float: right;
+    border: 1px solid black;
+    margin-right: 5px;
+}
+
+#NavBar-link {
+    vertical-align: middle;
+    display: table-cell;
+}

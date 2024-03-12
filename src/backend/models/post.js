@@ -36,10 +36,53 @@ class Post {
                     username,
                     content,
                     time_posted AS "timePosted"
-            FROM posts`,
+             FROM posts
+             ORDER BY time_posted DESC`,
         );
 
         return postRes.rows;
+    }
+
+    /** gets all posts from people username follows
+     * 
+     * returns [ {id, username, content, timePosted}, ...]
+     */
+    static async getFollowingPosts(username) {
+        const postRes = await db.query(
+            `SELECT p.id,
+                    p.username,
+                    p.content,
+                    p.time_posted AS "timePosted"
+            FROM posts p
+            JOIN follows f
+            ON p.username = f.user_followed
+            WHERE f.user_following = $1
+            ORDER BY time_posted DESC`,
+            [username],
+        );
+
+        const posts = postRes.rows;
+
+        return posts;
+    }
+
+    /** gets posts from user
+     * 
+     * return [{id, username, content, time_posted}, ...]
+     */
+
+    static async getPostsFrom(username) {
+        const postsRes = await db.query(
+            `SELECT id
+             FROM posts
+             WHERE username = $1
+             ORDER BY time_posted DESC`,
+             [username],
+        );
+
+        const posts = postsRes.rows;
+
+        return posts;
     }
 
     /** gets post by id
@@ -60,7 +103,7 @@ class Post {
         const post = postRes.rows[0];
 
         if(!post) {
-            throw new ExpressError(`No such message: ${id}`, 404);
+            throw new NotFoundError(`No such post: ${id}`, 404);
         }
 
         return post;

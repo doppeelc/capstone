@@ -4,16 +4,9 @@
     "type": "object",
     "properties": {
       "password": {
-        "type": "string",
-        "minLength": 5,
-        "maxLength": 20
+        "type": "string"
       },
-      "firstName": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 30
-      },
-      "lastName": {
+      "displayName": {
         "type": "string",
         "minLength": 1,
         "maxLength": 30

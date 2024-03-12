@@ -5,7 +5,7 @@
 const jsonschema = require("jsonschema");
 
 const express = require("express");
-const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
+const { ensureCorrectUserOrAdmin, ensureAdmin, ensureLoggedIn } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const User = require("../models/user");
 const { createToken } = require("../helpers/tokens");
@@ -23,7 +23,7 @@ const router = express.Router();
  * admin.
  *
  * This returns the newly created user and an authentication token for them:
- *  {user: { username, firstName, lastName, email, isAdmin }, token }
+ *  {user: { username, displayName, email, isAdmin }, token }
  *
  * Authorization required: admin
  **/
@@ -45,14 +45,14 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 });
 
 
-/** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
+/** GET / => { users: [ {username, displayName, email }, ... ] }
  *
  * Returns list of all users.
  *
- * Authorization required: admin
+ * Authorization required: logged in
  **/
 
-router.get("/", ensureAdmin, async function (req, res, next) {
+router.get("/", ensureLoggedIn, async function (req, res, next) {
   try {
     const users = await User.findAll();
     return res.json({ users });
@@ -64,13 +64,12 @@ router.get("/", ensureAdmin, async function (req, res, next) {
 
 /** GET /[username] => { user }
  *
- * Returns { username, firstName, lastName, isAdmin, jobs }
- *   where jobs is { id, title, companyHandle, companyName, state }
+ * Returns { username, displayName, email, isAdmin }
  *
- * Authorization required: admin or same user-as-:username
+ * Authorization required: logged in
  **/
 
-router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
+router.get("/:username", ensureLoggedIn, async function (req, res, next) {
   try {
     const user = await User.get(req.params.username);
     return res.json({ user });
@@ -80,12 +79,24 @@ router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, nex
 });
 
 
+/** GET /[username]/follows => [username, ...] */
+
+router.get("/:username/follows", ensureLoggedIn, async function (req, res, next) {
+  try {
+    const usernames = await User.getFollowing(req.params.username);
+    return res.json({ usernames });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+
 /** PATCH /[username] { user } => { user }
  *
  * Data can include:
- *   { firstName, lastName, password, email }
+ *   { displayName, password, email }
  *
- * Returns { username, firstName, lastName, email, isAdmin }
+ * Returns { username, displayName, email, isAdmin }
  *
  * Authorization required: admin or same-user-as-:username
  **/
@@ -131,8 +142,26 @@ router.delete("/:username", ensureCorrectUserOrAdmin, async function (req, res, 
 router.post("/:username/follow/:username2", ensureCorrectUserOrAdmin, async function (req, res, next) {
   try {
     const { username, username2 } = req.params;
-    await User.follow(username, username2);
+    await User.followUser(username, username2);
     return res.json({ followed: username2 });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+
+/** POST /[username]/unFollow/[username2]
+ * 
+ * Follows a user
+ *
+ * Authorization required: admin or same-user-as-username
+ */
+
+router.post("/:username/unFollow/:username2", ensureCorrectUserOrAdmin, async function (req, res, next) {
+  try {
+    const { username, username2 } = req.params;
+    await User.unFollowUser(username, username2);
+    return res.json({ unFollowed: username2 });
   } catch (err) {
     return next(err);
   }

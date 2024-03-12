@@ -9,7 +9,7 @@ const { ensureCorrectUserOrAdmin, ensureAdmin, ensureLoggedIn } = require("../mi
 const { BadRequestError, UnauthorizedError } = require("../expressError");
 const Post = require("../models/post");
 const { createToken } = require("../helpers/tokens");
-const postNewSchema = require("../schemas/userNew.json");
+const postNewSchema = require("../schemas/postNew.json");
 const User = require("../models/user");
 const g = require("file-saver");
 
@@ -21,7 +21,7 @@ const router = express.Router();
  * post should be { content }
  */
 
-router.post("/", async function (req, res, next) {
+router.post("/", ensureLoggedIn, async function (req, res, next) {
     try {
         const validator = jsonschema.validate(req.body, postNewSchema);
         if(!validator.valid) {
@@ -45,9 +45,39 @@ router.post("/", async function (req, res, next) {
  * Authorization required: admin
  */
 
-router.get("/", ensureAdmin, async function (req, res, next) {
+router.get("/", ensureLoggedIn, async function (req, res, next) {
     try {
         const posts = await Post.findAll();
+        return res.json({ posts });
+    } catch (err) {
+        return next(err);
+    }
+});
+
+
+/** GET /[username]/followFeed
+ * 
+ * Returns posts of who user follows
+*/
+
+router.get("/:username/followFeed", ensureCorrectUserOrAdmin, async function (req, res, next) {
+  try {
+    const posts = await Post.getFollowingPosts(req.params.username);
+    return res.json({ posts });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+
+/** GET /[username]/posts
+ * 
+ * get posts of user
+*/
+
+router.get("/:username/posts", ensureLoggedIn, async function (req, res, next) {
+    try {
+        const posts = await Post.getPostsFrom(req.params.username);
         return res.json({ posts });
     } catch (err) {
         return next(err);
@@ -64,7 +94,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
 
 router.get("/:id", ensureLoggedIn, async function (req, res, next) {
     try {
-        const post = await Post.get(req.params.username);
+        const post = await Post.get(req.params.id);
         return res.json({ post });
     } catch (err) {
         return next(err);
@@ -77,9 +107,9 @@ router.get("/:id", ensureLoggedIn, async function (req, res, next) {
  * Authorization required: admin or same-user-as-:username
  */
 
-router.delete("/:postId", async function (req, res, next) {
+router.delete("/:id", async function (req, res, next) {
     try {
-        const postId = req.params.postId;
+        const postId = req.params.id;
         const post = await Post.get(postId);
         const user = await User.get(post.username);
 

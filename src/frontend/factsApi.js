@@ -25,15 +25,14 @@ class FactsApi {
   }
 
   static async request(genre) {
-    console.debug("API Call:", endpoint, data, method);
-
-    if(!(genre in this.genres)) {
-        return "Invalid genre, please choose: 'numbers', 'advice', or 'chuck'";
+    
+    if(!this.genres.includes(genre)) {
+        return "Invalid genre";
     }
 
     //there are multiple ways to pass an authorization token, this is how you pass it in the header.
     //this has been provided to show you another way to pass the token. you are only expected to read this code for this project.
-    const url = urls[genre];
+    const url = this.urls[genre];
 
     try {
       return (await axios.get(url)).data;

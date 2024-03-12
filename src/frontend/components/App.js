@@ -22,10 +22,9 @@ function App() {
                 if(token) {
                 try {
                     let { username } = jwtDecode(token);
-                    JoblyApi.token = token;
-                    let user = await JoblyApi.getCurrentUser(username);
+                    UserApi.token = token;
+                    let user = await UserApi.getCurrentUser(username);
                     setCurrentUser({loaded:true, data:user});
-                    setApplications(user.applications);
                 } catch (e) {
                     setCurrentUser({loaded:true, data:null});
                 }
@@ -42,12 +41,14 @@ function App() {
       let res = await UserApi.register(user);
       setToken(res);
       localStorage.setItem("token", res);
+      window.location.href = "/profile";
     }
   
     async function login(username, password) {
       let res = await UserApi.login(username, password);
       setToken(res);
       localStorage.setItem("token", res);
+      window.location.href = "/profile";
     }
   
     function logout() {
@@ -57,8 +58,8 @@ function App() {
     }
   
     async function getNumberFact() {
-      let fact = await FactsApi.getNumbersFact();
-      return fact;
+        let fact = await FactsApi.getNumbersFact();
+        return fact;
     }
 
     async function getAdvice() {
@@ -69,6 +70,21 @@ function App() {
     async function getChuckJoke() {
         let joke = await FactsApi.getChuckJoke();
         return joke;
+    }
+
+    async function makePost(content) {
+        let post = await UserApi.makePost(content);
+        return post;
+    }
+
+    async function follow(username) {
+        let user = await UserApi.followUser(currentUser.data.username, username);
+        return user;
+    }
+
+    async function unFollow(username) {
+        let user = await UserApi.unFollowUser(currentUser.data.username, username);
+        return user;
     }
   
     if(!currentUser.loaded) {
@@ -81,7 +97,10 @@ function App() {
             currentUser:currentUser,
             number:{getNumberFact} ,
             advice:{getAdvice},
-            chuck:{getChuckJoke}
+            chuck:{getChuckJoke},
+            makePost:{makePost},
+            follow:{follow},
+            unFollow:{unFollow}
         }}>
             <NavBar currentUser={currentUser.data}
                     logout={logout} />

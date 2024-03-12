@@ -133,7 +133,7 @@ class User {
         if(!user) throw new NotFoundError(`No user: ${username}`);
 
         const userPosts = await db.query(
-            `SELECT post_id
+            `SELECT id
              FROM posts
              WHERE username = $1`,
              [username]
@@ -212,7 +212,7 @@ class User {
              [username],
         );
         
-        return following.rows;
+        return following.rows.map(u => u.userFollowed);
     }
 
     /**
@@ -291,11 +291,14 @@ class User {
 
         if (!post) throw new NotFoundError(`No post with id: ${postId}`);
 
-        await db.query(
+        const id = await db.query(
             `INSERT INTO likes (username, post_id)
-             VALUES ($1, $2)`,
+             VALUES ($1, $2)
+             RETURNING post_id`,
              [username, postId],
         );
+
+        return id.rows[0];
     }
 
     /** Follows a user
@@ -324,11 +327,50 @@ class User {
 
         if (!user2) throw new NotFoundError(`No username: ${username2}`);
 
-        await db.query(
+        const followed = await db.query(
             `INSERT INTO follows (user_following, user_followed)
              VALUES ($1, $2)`,
              [username1, username2],
         );
+        
+        return followed.rows[0];
+    }
+
+    /** Unfollows a user
+     * 
+     * returns { unfollowed: username }
+     */
+    
+    static async unFollowUser(username1, username2) {
+        const user1Res = await db.query(
+            `SELECT username
+             FROM users
+             WHERE username=$1`,
+             [username1],
+        );
+        const user1 = user1Res.rows[0];
+
+        if (!user1) throw new NotFoundError(`No username: ${username1}`);
+
+        const user2Res = await db.query(
+            `SELECT username
+             FROM users
+             WHERE username=$1`,
+             [username2],
+        );
+        const user2 = user2Res.rows[0];
+
+        if (!user2) throw new NotFoundError(`No username: ${username2}`);
+        
+        const unFollow = await db.query(
+            `DELETE FROM follows
+             WHERE user_following = $1
+             AND user_followed = $2
+             RETURNING user_followed`,
+             [username1, username2],
+        );
+        
+        return unFollow.rows[0];
     }
 }
 

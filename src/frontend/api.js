@@ -36,11 +36,25 @@ class UserApi {
 
   // Individual API routes
 
+  /** Get all posts */
+
+  static async getAllPosts() {
+    let res = await this.request(`posts`);
+    return res.posts;
+  }
+
   /** Get details on a post by id */
 
   static async getPost(id) {
     let res = await this.request(`posts/${id}`);
     return res.post;
+  }
+
+  /** Get posts from everyone that user follows */
+
+  static async getFollowingPosts(username) {
+    let res = await this.request(`posts/${username}/followFeed`);
+    return res.posts;
   }
 
   /** Creates an account from user information */
@@ -59,6 +73,20 @@ class UserApi {
     return res.token;
   }
 
+  /** Gets a user's public information */
+
+  static async getUserInfo(username) {
+    let res = await this.request(`users/${username}`);
+    return res.user;
+  }
+
+  /** Gets posts from username */
+
+  static async getPostsFrom(username) {
+    let res = await this.request(`posts/${username}/posts`);
+    return res.posts;
+  }
+
   /** Gets current users information */
 
   static async getCurrentUser(username) {
@@ -69,9 +97,16 @@ class UserApi {
   /** Updates information of user */
 
   static async updateUser(updatedInfo) {
-    const { username, displayName, email } = updatedInfo;
-    let res = await this.request(`users/${username}`, {displayName, email}, "patch");
+    const { username, password, displayName, email } = updatedInfo;
+    let res = await this.request(`users/${username}`, {password, displayName, email}, "patch");
     return res.user;
+  }
+
+  /** Make a post */
+
+  static async makePost(content) {
+    let res = await this.request(`posts`, {content}, "post");
+    return res.post;
   }
 
   /** Follows user
@@ -84,6 +119,16 @@ class UserApi {
     return res.followed;
   }
 
+  /** Unfollows user
+   * 
+   * username1 unfollows username2
+   */
+
+  static async unFollowUser(username1, username2) {
+    let res = await this.request(`users/${username1}/unFollow/${username2}`, {}, "post");
+    return res.unFollowed;
+  }
+
   /** Likes post
    * 
    * username likes postId
@@ -94,12 +139,19 @@ class UserApi {
     return res.liked;
   }
 
+  /** Gets usernames who user follows */
+
+  static async getUsersFollowed(username) {
+    let res = await this.request(`users/${username}/follows`);
+    return res.usernames;
+  }
+
   // obviously, you'll add a lot here ...
 }
 
 // for now, put token ("testuser" / "password" on class)
-//FactsApi.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI" +
-//                 "6InRlc3R1c2VyIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTU5ODE" +
-//                 "1OTI1OX0.FtrMwBQwe6Ue-glIFgz_Nf8XxRT2YecFCiSpYL0fCXc";
+UserApi.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI" +
+                 "6InRlc3R1c2VyIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTU5ODE" +
+                 "1OTI1OX0.FtrMwBQwe6Ue-glIFgz_Nf8XxRT2YecFCiSpYL0fCXc";
 
 export default UserApi;
