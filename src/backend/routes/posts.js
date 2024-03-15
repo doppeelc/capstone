@@ -107,18 +107,17 @@ router.get("/:id", ensureLoggedIn, async function (req, res, next) {
  * Authorization required: admin or same-user-as-:username
  */
 
-router.delete("/:id", async function (req, res, next) {
+router.delete("/:id", ensureLoggedIn, async function (req, res, next) {
     try {
         const postId = req.params.id;
         const post = await Post.get(postId);
-        const user = await User.get(post.username);
-
-        if(!(user.isAdmin || post.username == res.locals.user.username)) {
+        
+        if(!(res.locals.user.isAdmin || post.username == res.locals.user.username)) {
             throw new UnauthorizedError("Only the post's owner or an admin may delete a post");
         }
 
-        await Post.remove(postId);
-        return res.json({ deleted: postId });
+        let id = await Post.remove(postId);
+        return res.json({ deleted: id });
     } catch (err) {
         return next(err);
     }

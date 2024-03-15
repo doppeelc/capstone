@@ -76,16 +76,6 @@ function App() {
         let post = await UserApi.makePost(content);
         return post;
     }
-
-    async function follow(username) {
-        let user = await UserApi.followUser(currentUser.data.username, username);
-        return user;
-    }
-
-    async function unFollow(username) {
-        let user = await UserApi.unFollowUser(currentUser.data.username, username);
-        return user;
-    }
   
     if(!currentUser.loaded) {
       return <p>Loading...</p>
@@ -98,9 +88,7 @@ function App() {
             number:{getNumberFact} ,
             advice:{getAdvice},
             chuck:{getChuckJoke},
-            makePost:{makePost},
-            follow:{follow},
-            unFollow:{unFollow}
+            makePost:{makePost}
         }}>
             <NavBar currentUser={currentUser.data}
                     logout={logout} />

@@ -139,6 +139,23 @@ class UserApi {
     return res.liked;
   }
 
+  /** Unlikes pots
+   * 
+   * username unlikes postId
+   */
+
+  static async unLikePost(username, postId) {
+    let res = await this.request(`users/${username}/unLike/${postId}`,  {}, "post");
+    return res.unLiked;
+  }
+
+  /** Gets postIds liked by username */
+
+  static async getLikes(username) {
+    let res = await this.request(`users/${username}/likes`);
+    return res.posts;
+  }
+
   /** Gets usernames who user follows */
 
   static async getUsersFollowed(username) {
@@ -150,8 +167,8 @@ class UserApi {
 }
 
 // for now, put token ("testuser" / "password" on class)
-UserApi.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI" +
-                 "6InRlc3R1c2VyIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTU5ODE" +
-                 "1OTI1OX0.FtrMwBQwe6Ue-glIFgz_Nf8XxRT2YecFCiSpYL0fCXc";
+//UserApi.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI" +
+//                 "6InRlc3R1c2VyIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTU5ODE" +
+//                 "1OTI1OX0.FtrMwBQwe6Ue-glIFgz_Nf8XxRT2YecFCiSpYL0fCXc";
 
 export default UserApi;

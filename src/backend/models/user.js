@@ -132,15 +132,6 @@ class User {
 
         if(!user) throw new NotFoundError(`No user: ${username}`);
 
-        const userPosts = await db.query(
-            `SELECT id
-             FROM posts
-             WHERE username = $1`,
-             [username]
-        );
-
-        user.posts = userPosts.rows.map(p => p.job_id);
-
         return user;
     }
 
@@ -178,7 +169,7 @@ class User {
                         SET ${setCols} 
                         WHERE username = ${usernameVarIdx} 
                         RETURNING username,
-                                  display_name AS "displayName"
+                                  display_name AS "displayName",
                                   email,
                                   is_admin AS "isAdmin"`;
       const result = await db.query(querySql, [...values, username]);
@@ -211,8 +202,10 @@ class User {
              WHERE user_following = $1`,
              [username],
         );
+
+        let usernames = following.rows.map(u => u.userFollowed);
         
-        return following.rows.map(u => u.userFollowed);
+        return usernames;
     }
 
     /**
@@ -236,8 +229,10 @@ class User {
              WHERE user_followed = $1`,
              [username],
         );
+
+        let usernames = followers.rows.map(u => u.userFollowing);
         
-        return followers.rows;
+        return usernames;
     }
 
     /** Returns posts this user has liked
@@ -255,11 +250,16 @@ class User {
         const user = userRes.rows[0];
 
         if(!user) throw new NotFoundError(`No user: ${username}`);
-
+        
         const likesRes = await db.query(
-            `SELECT post_id AS "postId"
-             FROM likes
-             WHERE username = $1`,
+            `SELECT l.post_id AS "id",
+                    p.username AS "username",
+                    p.content AS "content",
+                    p.time_posted AS "timePosted"
+             FROM likes l
+             JOIN posts p
+             ON (p.id = l.post_id)
+             WHERE l.username = $1`,
              [username],
         );
         
@@ -294,7 +294,42 @@ class User {
         const id = await db.query(
             `INSERT INTO likes (username, post_id)
              VALUES ($1, $2)
-             RETURNING post_id`,
+             RETURNING post_id AS "postId"`,
+             [username, postId],
+        );
+
+        return id.rows[0];
+    }
+
+    /** Likes a user's post */
+
+    static async unLikePost(username, postId) {
+        
+        const userRes = await db.query(
+            `SELECT username
+             FROM users
+             WHERE username=$1`,
+             [username],
+        );
+        const user = userRes.rows[0];
+
+        if (!user) throw new NotFoundError(`No username: ${username}`);
+
+        const postRes = await db.query(
+            `SELECT id
+             FROM posts
+             WHERE id = $1`,
+             [postId],
+        );
+        const post = postRes.rows[0];
+
+        if (!post) throw new NotFoundError(`No post with id: ${postId}`);
+        
+        const id = await db.query(
+            `DELETE FROM likes
+             WHERE username = $1
+             AND post_id = $2
+             RETURNING post_id AS "postId"`,
              [username, postId],
         );
 
@@ -329,7 +364,8 @@ class User {
 
         const followed = await db.query(
             `INSERT INTO follows (user_following, user_followed)
-             VALUES ($1, $2)`,
+             VALUES ($1, $2)
+             RETURNING user_followed AS "userFollowed"`,
              [username1, username2],
         );
         
@@ -366,11 +402,39 @@ class User {
             `DELETE FROM follows
              WHERE user_following = $1
              AND user_followed = $2
-             RETURNING user_followed`,
+             RETURNING user_followed AS "userUnfollowed"`,
              [username1, username2],
         );
         
         return unFollow.rows[0];
+    }
+
+    /** Deletes a user
+     * 
+     * returns { deleted: username }
+     */
+
+    static async remove(username) {
+
+        const userCheck = await db.query(
+            `SELECT username
+             FROM users
+             WHERE username = $1`,
+             [username]
+        );
+
+        const user = userCheck.rows[0];
+
+        if(!user) { throw new NotFoundError(`No user with username: ${username}`) }
+
+        const deleted = await db.query(
+            `DELETE FROM users
+             WHERE username = $1
+             RETURNING username`,
+             [username],
+        );
+
+        return {deleted: deleted.rows[0].username}
     }
 }
 

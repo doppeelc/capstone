@@ -79,12 +79,27 @@ router.get("/:username", ensureLoggedIn, async function (req, res, next) {
 });
 
 
-/** GET /[username]/follows => [username, ...] */
+/** GET /[username]/follows => [username, ...]
+ * 
+ * Authorization required: logged in
+*/
 
 router.get("/:username/follows", ensureLoggedIn, async function (req, res, next) {
   try {
     const usernames = await User.getFollowing(req.params.username);
     return res.json({ usernames });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+
+/** GET /[username]/likes => [{id, username, content, timePosted}, ...] */
+
+router.get("/:username/likes", ensureLoggedIn, async function (req, res, next) {
+  try {
+    const posts = await User.getLikes(req.params.username);
+    return res.json({ posts });
   } catch (err) {
     return next(err);
   }
@@ -180,6 +195,24 @@ router.post("/:username/like/:postId", ensureCorrectUserOrAdmin, async function 
     const { username, postId } = req.params;
     await User.likePost(username, postId);
     return res.json({ liked: postId });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+
+/** POST /[username]/unLike/[postId]
+ * 
+ * Unlikes a user's post
+ * 
+ * Authorization required: admin or same-user-as-username
+ */
+
+router.post("/:username/unLike/:postId", ensureCorrectUserOrAdmin, async function (req, res, next) {
+  try {
+    const { username, postId } = req.params;
+    await User.unLikePost(username, postId);
+    return res.json({ unLiked: postId });
   } catch (err) {
     return next(err);
   }

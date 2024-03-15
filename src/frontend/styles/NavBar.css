@@ -1,24 +1,25 @@
 #NavBar {
-    height: 50px;
+    height: 75px;
 }
 
 #NavBar-Nav {
-    height: 100%;
+    height: 80%;
+    padding-left: 0px;
 }
 
 #NavBar-left {
     display: table;
     width: 10%;
-    height: 100%;
+    height: 96%;
     float: left;
     border: 1px solid black;
     margin-left: 5px;
 }
 
-#NavBar-others {
+#NavBar-right {
     display: table;
     width: 10%;
-    height: 100%;
+    height: 96%;
     float: right;
     border: 1px solid black;
     margin-right: 5px;
@@ -27,4 +28,14 @@
 #NavBar-link {
     vertical-align: middle;
     display: table-cell;
+}
+
+#NavBar-center {
+    position: absolute;
+    margin-top: 0px;
+    margin-left: 30%;
+    margin-right: 30%;
+    width: 40%;
+    text-align: center;
+    font-size: 40px;
 }

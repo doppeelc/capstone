@@ -5,7 +5,6 @@ import SignupForm from "./SignupForm";
 import LoginForm from "./LoginForm";
 import ProfilePage from "./ProfilePage";
 import NewPost from "./NewPost";
-import PostDetails from "./PostDetails";
 import UserPage from "./UserPage";
 import Home from "./Home";
 
@@ -28,8 +27,12 @@ function Routes({ currentUser, signup, login }) {
                     <PostFeed followingOnly={true} />
                 </Route>
 
+                <Route exact path="/likes">
+                    <PostFeed likedOnly={true} />
+                </Route>
+
                 <Route exact path="/posts/:id">
-                    <PostDetails />
+                    
                 </Route>
                 
                 <Route exact path="/users/:username">

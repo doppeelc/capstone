@@ -16,17 +16,19 @@ function NavBar({ logout }) {
 
                 { currentUser.data &&
                 <React.StrictMode>
-                    <NavItem id="NavBar-others">
+                    <NavItem id="NavBar-right">
                         <NavLink to="/profile" id="NavBar-link">Profile</NavLink>
                     </NavItem>
 
-                    <NavItem id="NavBar-others">
+                    <NavItem id="NavBar-right">
                         <NavLink to="/newPost" id="NavBar-link">Create New Post</NavLink>
                     </NavItem>
 
-                    <NavItem id="NavBar-others">
+                    <NavItem id="NavBar-right">
                         <NavLink to="/" id="NavBar-link" onClick={logout}>Log Out {currentUser.username}</NavLink>
                     </NavItem>
+                    
+                    <h1 id="NavBar-center" >Factly</h1>
 
                     <NavItem id="NavBar-left">
                         <NavLink to="/feed" id="NavBar-link">Posts</NavLink>
@@ -35,15 +37,19 @@ function NavBar({ logout }) {
                     <NavItem id="NavBar-left">
                         <NavLink to="/following" id="NavBar-link">Following</NavLink>
                     </NavItem>
+
+                    <NavItem id="NavBar-left" >
+                        <NavLink to="/likes" id="NavBar-link">Likes</NavLink>
+                    </NavItem>
                 </React.StrictMode>
                 }
                 { !currentUser.data &&
                 <React.StrictMode>
-                    <NavItem id="NavBar-others">
+                    <NavItem id="NavBar-right">
                         <NavLink to="/login" id="NavBar-link">Login</NavLink>
                     </NavItem>
 
-                    <NavItem id="NavBar-others">
+                    <NavItem id="NavBar-right">
                         <NavLink to="/signup" id="NavBar-link">Sign Up</NavLink>
                     </NavItem>
                 </React.StrictMode>

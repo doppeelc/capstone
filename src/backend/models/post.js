@@ -19,7 +19,7 @@ class Post {
                     content,
                     time_posted)
              VALUES ($1, $2, current_timestamp)
-             RETURNING id, username, content, time_posted`,
+             RETURNING id, username, content, time_posted AS "timePosted"`,
              [username, content],
         );
 
@@ -40,7 +40,9 @@ class Post {
              ORDER BY time_posted DESC`,
         );
 
-        return postRes.rows;
+        const posts = postRes.rows;
+
+        return posts;
     }
 
     /** gets all posts from people username follows
@@ -73,7 +75,10 @@ class Post {
 
     static async getPostsFrom(username) {
         const postsRes = await db.query(
-            `SELECT id
+            `SELECT id,
+                    username,
+                    content,
+                    time_posted AS "timePosted"
              FROM posts
              WHERE username = $1
              ORDER BY time_posted DESC`,
@@ -121,7 +126,9 @@ class Post {
 
         const likes = likesRes.rows;
 
-        return likes;
+        const usernames = likes.map(user => user.username)
+
+        return usernames;
     }
 
     /** deletes post by id
@@ -136,6 +143,8 @@ class Post {
         const deleted = res.rows[0];
 
         if(!deleted) throw new NotFoundError(`No post with id: ${id}`);
+
+        return deleted.id;
     }
 }
 

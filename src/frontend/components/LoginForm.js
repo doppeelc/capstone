@@ -5,8 +5,8 @@ import "../styles/LoginForm.css";
 function LoginForm({ login }) {
 
     const INIT_STATE = {
-        username:"testuser",
-        password:"password"
+        username:"",
+        password:""
     }
     
     const [formData, setFormData] = useState(INIT_STATE);

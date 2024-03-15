@@ -1,22 +1,32 @@
-import React, { useEffect, useState } from "react";
-import "../styles/Post.css";
+import React, { useContext, useEffect, useState } from "react";
 import UserApi from "../api";
-import { NavLink, NavItem } from "reactstrap";
+import UserContext from "./UserContext";
+import "../styles/Post.css";
 
 
-function Post({ postId }) {
+function Post({ post, isLiked }) {
 
-    const [ post, setPost ] = useState(UserApi.getPost(postId));
+    const { currentUser } = useContext(UserContext);
     const [ isLoading, setIsLoading ] = useState(true);
+    const [ liked, setliked ] = useState(false);
 
     useEffect(() => {
-        async function getPost() {
-            let res = await UserApi.getPost(postId);
-            setPost(res);
+        async function getIsLiked() {
+            setliked(isLiked(post.id));
             setIsLoading(false);
         }
-        getPost();
-    }, [postId]);
+        getIsLiked();
+    }, [currentUser, post, isLiked]);
+
+    async function toggleLike() {
+        if(liked) {
+            await UserApi.unLikePost(currentUser.data.username, post.id);
+            setliked(false);
+        } else {
+            await UserApi.likePost(currentUser.data.username, post.id);
+            setliked(true);
+        }
+    }
 
     if(isLoading) {
         return <p>Loading...</p>;
@@ -24,15 +34,16 @@ function Post({ postId }) {
     
     return (
         <div className="Post" >
+            <a className="Post-username" href={`/users/${post.username}`} >
+                {post.username}
+            </a>
             <p className="Post-content" >
                 {post.content}
             </p>
             <p className="Post-time" >
                 {post.timePosted.split('.')[0].replace("T", " at ")}
             </p>
-            <NavLink className="Post-username" href={`/users/${post.username}`} >
-                {post.username}
-            </NavLink>
+            <button onClick={toggleLike} >{ liked ? "Unlike" : "Like" }</button>
         </div>
     )
 }
