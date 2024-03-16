@@ -1,0 +1,17 @@
+#NewPost {
+    margin: 25px;
+    background-color: lightgray;
+}
+
+#NewPost-form {
+    height: 80px;
+}
+
+#NewPost-post {
+    margin-top: 15px;
+    height: 30px;
+}
+
+#NewPost-button {
+    margin-top: 15px;
+}

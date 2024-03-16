@@ -13,6 +13,8 @@ function NavBar({ logout }) {
         <Navbar expand="md" id="NavBar">
 
             <Nav id="NavBar-Nav" >
+                    
+                <h1 id="NavBar-center" >Factly</h1>
 
                 { currentUser.data &&
                 <React.StrictMode>
@@ -27,8 +29,6 @@ function NavBar({ logout }) {
                     <NavItem id="NavBar-right">
                         <NavLink to="/" id="NavBar-link" onClick={logout}>Log Out {currentUser.username}</NavLink>
                     </NavItem>
-                    
-                    <h1 id="NavBar-center" >Factly</h1>
 
                     <NavItem id="NavBar-left">
                         <NavLink to="/feed" id="NavBar-link">Posts</NavLink>

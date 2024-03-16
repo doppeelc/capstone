@@ -1,0 +1,19 @@
+#lbl {
+    display: table;
+}
+
+#inpt {
+    display: table;
+    margin-bottom: 10px;
+}
+
+#ProfilePage-form {
+    width: fit-content;
+    margin: auto;
+}
+
+#ProfilePage-deleteButton {
+    margin: 25px;
+    background-color: darkred;
+    color: white;
+}

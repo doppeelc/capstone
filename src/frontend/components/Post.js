@@ -9,10 +9,13 @@ function Post({ post, isLiked }) {
     const { currentUser } = useContext(UserContext);
     const [ isLoading, setIsLoading ] = useState(true);
     const [ liked, setliked ] = useState(false);
+    const [ isUsers, setIsUsers ] = useState(false);
+    const [ isDeleted, setIsDeleted ] = useState(false);
 
     useEffect(() => {
         async function getIsLiked() {
             setliked(isLiked(post.id));
+            setIsUsers(currentUser.data.username == post.username);
             setIsLoading(false);
         }
         getIsLiked();
@@ -28,8 +31,17 @@ function Post({ post, isLiked }) {
         }
     }
 
+    async function deletePost() {
+        await UserApi.deletePost(post.id);
+        setIsDeleted(true);
+    }
+
     if(isLoading) {
         return <p>Loading...</p>;
+    }
+
+    if(isDeleted) {
+        return;
     }
     
     return (
@@ -43,6 +55,7 @@ function Post({ post, isLiked }) {
             <p className="Post-time" >
                 {post.timePosted.split('.')[0].replace("T", " at ")}
             </p>
+            {isUsers && <button onClick={deletePost} >Delete Post</button>}
             <button onClick={toggleLike} >{ liked ? "Unlike" : "Like" }</button>
         </div>
     )

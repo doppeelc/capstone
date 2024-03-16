@@ -28,7 +28,7 @@ function SignupForm({ signup }) {
     }
 
     return (
-        <div>
+        <div className="SignupForm" >
             <h1>Sign Up</h1>
             <form id="SignupForm" onSubmit={handleSubmit}>
                 <label id="lbl" htmlFor="username">Username</label>

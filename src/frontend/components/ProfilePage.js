@@ -13,7 +13,7 @@ function ProfilePage() {
                 username:currentUser.data.username,
                 displayName:currentUser.data.displayName,
                 email:currentUser.data.email,
-                password:""
+                password:currentUser.data.password
             };
 
     const [formData, setFormData] = useState(INIT_STATE);
@@ -33,6 +33,11 @@ function ProfilePage() {
             ...formData,
             password:""
         }));
+    }
+
+    async function deleteAccount() {
+        await UserApi.deleteAccount(currentUser.data.username);
+        window.location.href = "/";
     }
 
 
@@ -75,6 +80,7 @@ function ProfilePage() {
                     />
                 <button>Update Info</button>
             </form>
+            <button id="ProfilePage-deleteButton" onClick={deleteAccount} >Delete Account</button>
             <div className="ProfilePage-posts">
                 <PostFeed username={currentUser.data.username} />
             </div>

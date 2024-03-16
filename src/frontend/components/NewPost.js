@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import UserContext from "./UserContext";
-import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
+import "../styles/NewPost.css";
 
 
 function NewPost() {

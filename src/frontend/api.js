@@ -163,6 +163,21 @@ class UserApi {
     return res.usernames;
   }
 
+  /** Deletes account */
+
+  static async deleteAccount(username) {
+    let res = await this.request(`users/${username}`, {}, "delete");
+    delete this.token;
+    return res.deleted;
+  }
+
+  /** Deletes post */
+
+  static async deletePost(postId) {
+    let res = await this.request(`posts/${postId}`, {}, "delete");
+    return res.deleted;
+  }
+
   // obviously, you'll add a lot here ...
 }
 
