@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches the snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="Post"
+  >
+    <a
+      class="Post-username"
+      href="/users/testuser"
+    >
+      testuser
+    </a>
+    <p
+      class="Post-content"
+    >
+      test post
+    </p>
+    <p
+      class="Post-time"
+    >
+      stringValue
+    </p>
+    <button>
+      Delete Post
+    </button>
+    <button>
+      Like
+    </button>
+  </div>
+</DocumentFragment>
+`;

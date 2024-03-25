@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches the snapshot 1`] = `
+<DocumentFragment>
+  <div
+    id="NewPost"
+  >
+    <div
+      id="NewPost-options"
+    >
+      <button
+        id="NewPost-button"
+      >
+        Number Fact
+      </button>
+      <button
+        id="NewPost-button"
+      >
+        Life Advice
+      </button>
+      <button
+        id="NewPost-button"
+      >
+        Chuck Norris Joke
+      </button>
+    </div>
+    <form
+      id="NewPost-form"
+    >
+      <p
+        id="NewPost-post"
+      />
+      <button
+        id="NewPost-formButton"
+      >
+        Post
+      </button>
+    </form>
+  </div>
+</DocumentFragment>
+`;

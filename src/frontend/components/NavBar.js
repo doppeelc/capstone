@@ -18,7 +18,7 @@ function NavBar({ logout }) {
 
                 { currentUser.data &&
                 <React.StrictMode>
-                    <NavItem id="NavBar-right">
+                    <NavItem id="NavBar-right" data-testid="withUser">
                         <NavLink to="/profile" id="NavBar-link">Profile</NavLink>
                     </NavItem>
 
@@ -45,7 +45,7 @@ function NavBar({ logout }) {
                 }
                 { !currentUser.data &&
                 <React.StrictMode>
-                    <NavItem id="NavBar-right">
+                    <NavItem id="NavBar-right" data-testid="withoutUser">
                         <NavLink to="/login" id="NavBar-link">Login</NavLink>
                     </NavItem>
 

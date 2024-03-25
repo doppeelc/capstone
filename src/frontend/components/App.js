@@ -6,6 +6,7 @@ import UserApi from '../api';
 import { jwtDecode } from "jwt-decode";
 import '../styles/App.css';
 import FactsApi from '../factsApi';
+import { BrowserRouter } from 'react-router-dom';
 
 function App() {
 
@@ -82,10 +83,10 @@ function App() {
     }
 
   return (
-    <div className="App">
+    <BrowserRouter className="App">
         <UserContext.Provider value={{
             currentUser:currentUser,
-            number:{getNumberFact} ,
+            number:{getNumberFact},
             advice:{getAdvice},
             chuck:{getChuckJoke},
             makePost:{makePost}
@@ -97,7 +98,7 @@ function App() {
                     signup={signup}
                     login={login} />
         </UserContext.Provider>
-    </div>
+    </BrowserRouter>
   );
 }
 

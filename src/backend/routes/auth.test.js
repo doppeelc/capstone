@@ -79,11 +79,11 @@ describe("POST /auth/register", function () {
         .post("/auth/register")
         .send({
           username: "new",
-          firstName: "first",
-          lastName: "last",
+          displayName: "Test User",
           password: "password",
           email: "new@email.com",
         });
+    console.log(resp);
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
       "token": expect.any(String),
@@ -104,8 +104,7 @@ describe("POST /auth/register", function () {
         .post("/auth/register")
         .send({
           username: "new",
-          firstName: "first",
-          lastName: "last",
+          displayName: "Test User",
           password: "password",
           email: "not-an-email",
         });

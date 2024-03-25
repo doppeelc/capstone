@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches the snapshot 1`] = `
+<DocumentFragment>
+  <nav
+    class="navbar navbar-expand-md"
+    id="NavBar"
+  >
+    <ul
+      class="nav"
+      id="NavBar-Nav"
+    >
+      <h1
+        id="NavBar-center"
+      >
+        Factly
+      </h1>
+      <li
+        class="nav-item"
+        data-testid="withoutUser"
+        id="NavBar-right"
+      >
+        <a
+          href="/login"
+          id="NavBar-link"
+        >
+          Login
+        </a>
+      </li>
+      <li
+        class="nav-item"
+        id="NavBar-right"
+      >
+        <a
+          href="/signup"
+          id="NavBar-link"
+        >
+          Sign Up
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <div>
+    <h3>
+      Please Sign Up or Log In.
+    </h3>
+  </div>
+</DocumentFragment>
+`;
