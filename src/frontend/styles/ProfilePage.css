@@ -7,6 +7,11 @@
     margin-bottom: 10px;
 }
 
+#ProfilePage {
+    margin: auto;
+    text-align: center;
+}
+
 #ProfilePage-form {
     width: fit-content;
     margin: auto;
@@ -16,4 +21,19 @@
     margin: 25px;
     background-color: darkred;
     color: white;
+    text-align: center;
+}
+
+.ProfilePage-error {
+    text-align: center;
+    height: 50px;
+    margin-bottom: 40px;
+}
+
+.ProfilePage-error-text {
+    font-size: 20px;
+    font-weight: bolder;
+    background-color: lightcoral;
+    padding: 20px;
+    margin-top: 0px;
 }

@@ -15,6 +15,7 @@ function App() {
         loaded:false,
         data:null
     });
+    const [ error, setError ] = useState();
 
     useEffect(
         function loadUser() {
@@ -39,14 +40,28 @@ function App() {
     );
 
     async function signup(user) {
-      let res = await UserApi.register(user);
+      let res;
+      try {
+        res = await UserApi.register(user);
+      } catch (err) {
+        setError(400 ? "Invalid user data" : "Something went wrong");
+        return;
+      }
+      setError();
       setToken(res);
       localStorage.setItem("token", res);
       window.location.href = "/profile";
     }
   
     async function login(username, password) {
-      let res = await UserApi.login(username, password);
+      let res;
+      try {
+        res = await UserApi.login(username, password);
+      } catch (err) {
+        setError(401 ? err.message : "Something went wrong");
+        return;
+      }
+      setError();
       setToken(res);
       localStorage.setItem("token", res);
       window.location.href = "/profile";
@@ -93,6 +108,14 @@ function App() {
         }}>
             <NavBar currentUser={currentUser.data}
                     logout={logout} />
+            
+            {error &&
+            <div className='App-error'>
+                <p className='App-error-text'>
+                    {error}
+                </p>
+            </div>
+            }
 
             <Routes currentUser={currentUser.data}
                     signup={signup}

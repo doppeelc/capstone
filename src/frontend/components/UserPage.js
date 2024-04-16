@@ -13,10 +13,16 @@ function UserPage() {
     const [ userInfo, setUserInfo ] = useState();
     const [ userPosts, setUserPosts ] = useState();
     const [ following, setFollowing ] = useState(false);
+    const [ isError, setIsError ] = useState(false);
     
     useEffect(() => {
         async function getUserInfo() {
-            let userInfo = await UserApi.getUserInfo(username);
+            let userInfo;
+            try {
+                userInfo = await UserApi.getUserInfo(username);
+            } catch (err) {
+                setIsError(true);
+            }
             setUserInfo(userInfo);
         }
         async function getPostsFrom() {
@@ -27,10 +33,22 @@ function UserPage() {
             let userFollowing = await UserApi.getUsersFollowed(currentUser.data.username);
             setFollowing(userFollowing.includes(username));
         }
-        getIsFollowing();
         getUserInfo();
-        getPostsFrom();
-    }, [username, currentUser]);
+        if(!isError) {
+            getIsFollowing();
+            getPostsFrom();
+        }
+    }, [username, currentUser, isError]);
+
+    if(isError) {
+        return (
+            <div className="ProfilePage-error">
+                <p className="ProfilePage-error-text">
+                    No user with username: {username}
+                </p>
+            </div>
+        );
+    }
 
     async function toggleFollowUser() {
         if(following) {
@@ -51,10 +69,10 @@ function UserPage() {
     }
     
     return (
-        <div className="UserPage">
+        <div id="ProfilePage">
             <h1>{userInfo.displayName}</h1>
             <h3>{username}</h3>
-            <button className="UserPage-follow" onClick={toggleFollowUser} >{following ? "Unfollow" : "Follow"}</button>
+            <button id="UserPage-follow" onClick={toggleFollowUser} >{following ? "Unfollow" : "Follow"}</button>
             <PostFeed username={username} />
         </div>
     );

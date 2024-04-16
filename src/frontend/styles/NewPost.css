@@ -1,6 +1,7 @@
 #NewPost {
     margin: 25px;
     background-color: lightgray;
+    text-align: center;
 }
 
 #NewPost-form {
