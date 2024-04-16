@@ -6,6 +6,8 @@ Users are required to make an account before accessing the website, and once the
 
 Setup:
     You need 2 terminals open, one for frontend, and one for backend
+    You will also need a .env file in both the main folder and in src/backend
+    This needs a PGPASSWORD and a SECRET_KEY
 
     Backend-
         In one terminal, go into src/backend and run "npm install"
